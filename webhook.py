@@ -27,12 +27,11 @@ def webhook():
         else:
             print("❌ Verification failed.")
             return "Verification failed", 403
-        ...
 
     elif request.method == "POST":
         data = request.get_json()
         print("🔵 Full Webhook Payload:")
-        print(json.dumps(data, indent=2))  # Pretty print for clarity
+        print(json.dumps(data, indent=2))
 
         for entry in data.get("entry", []):
             for event in entry.get("messaging", []):
@@ -48,6 +47,5 @@ def webhook():
 
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
