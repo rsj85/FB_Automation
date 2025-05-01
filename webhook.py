@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import os
+import json
 
 app = Flask(__name__)
 
@@ -15,15 +16,24 @@ def index():
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
-    if request.method == "POST":
+    if request.method == "GET":
+        # Verify token logic (already working)
+        ...
+
+    elif request.method == "POST":
         data = request.get_json()
-        print("Webhook event received:", data)  # Log the entire payload
+        print("🔵 Full Webhook Payload:")
+        print(json.dumps(data, indent=2))  # Pretty print for clarity
 
         for entry in data.get("entry", []):
             for event in entry.get("messaging", []):
-                sender_id = event["sender"]["id"]
+                sender_id = event.get("sender", {}).get("id")
                 message_text = event.get("message", {}).get("text")
-                print(f"PSID: {sender_id} | Message: {message_text}")
+
+                if sender_id and message_text:
+                    print(f"✅ PSID: {sender_id} | Message: {message_text}")
+                else:
+                    print("⚠️ Event does not contain a user message.")
 
         return "EVENT_RECEIVED", 200
 
