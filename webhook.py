@@ -12,7 +12,7 @@ VERIFY_TOKEN = 'my_fb_automation_token'
 def webhook():
     if request.method == "GET":
         # Facebook verification
-        verify_token = "your_verify_token_here"
+        verify_token = 'my_fb_automation_token'
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
