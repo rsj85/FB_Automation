@@ -8,48 +8,32 @@ PAGE_ACCESS_TOKEN = 'EAAOqBk9pfb0BOwqzENiPEGA5564slErYxCei4xZAKgGvFZAEOGIxPrJdv7
 VERIFY_TOKEN = 'my_fb_automation_token'
 
 
-@app.route("/webhook", methods=["GET", "POST"])
-def webhook():
-    if request.method == "GET":
-        # Facebook verification
-        verify_token = 'my_fb_automation_token'
-        mode = request.args.get("hub.mode")
-        token = request.args.get("hub.verify_token")
-        challenge = request.args.get("hub.challenge")
-
-        if mode == "subscribe" and token == verify_token:
-            return challenge, 200
-        else:
-            return "Verification failed", 403
-
-    elif request.method == "POST":
-        # Handle incoming messages here
-        data = request.get_json()
-        print(data)  # For now, just log it
-        return "EVENT_RECEIVED", 200
-
-
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
     return "Hello, this is the webhook server."
 
 
-def send_message(recipient_id, text):
-    """Send a message to the recipient via the Send API."""
-    url = "https://graph.facebook.com/v19.0/me/messages"
-    payload = {
-        "recipient": {"id": recipient_id},
-        "message": {"text": text},
-        "messaging_type": "MESSAGE_TAG",
-        "tag": "ACCOUNT_UPDATE"
-    }
-    headers = {"Content-Type": "application/json"}
-    params = {"access_token": PAGE_ACCESS_TOKEN}
+@app.route("/webhook", methods=["GET", "POST"])
+def webhook():
+    if request.method == "GET":
+        # Facebook verification
+        mode = request.args.get("hub.mode")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
 
-    response = requests.post(url, json=payload, headers=headers, params=params)
-    print(response.status_code, response.text)
+        if mode == "subscribe" and token == VERIFY_TOKEN:
+            print("Webhook verified successfully")
+            return challenge, 200
+        else:
+            print("Verification failed")
+            return "Verification token mismatch", 403
+
+    elif request.method == "POST":
+        print("Webhook received a POST request")
+        return "EVENT_RECEIVED", 200
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Render provides this
+    import os
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
