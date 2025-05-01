@@ -15,22 +15,15 @@ def index():
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
-    if request.method == "GET":
-        # (your verification code)
-        ...
-
-    elif request.method == "POST":
+    if request.method == "POST":
         data = request.get_json()
-        print("Webhook event received:", data)
+        print("Webhook event received:", data)  # Log the entire payload
 
         for entry in data.get("entry", []):
             for event in entry.get("messaging", []):
-                sender_id = event["sender"]["id"]  # This is the PSID!
-                if "message" in event:
-                    message_text = event["message"].get("text")
-                    print(f"PSID: {sender_id} | Message: {message_text}")
-                    # Optionally auto-reply
-                    # send_message(sender_id, "Thanks! We'll remind you soon.")
+                sender_id = event["sender"]["id"]
+                message_text = event.get("message", {}).get("text")
+                print(f"PSID: {sender_id} | Message: {message_text}")
 
         return "EVENT_RECEIVED", 200
 
