@@ -1,10 +1,11 @@
 from flask import Flask, request
 import requests
+import os
 
 app = Flask(__name__)
 
-PAGE_ACCESS_TOKEN = 'YOUR_PAGE_ACCESS_TOKEN'
-VERIFY_TOKEN = 'your_verify_token_here'
+PAGE_ACCESS_TOKEN = 'EAAOqBk9pfb0BO479ABHt6wAnaBgKX4FSqQrcpp6vNytzr8LQk757ZCydp8PYLCWx12WgczsQYSIkJZCIbBISxtKChsC4F25XVoGM5LP1ZBfmnqKfZAjYBYMUetkb0sxdhv24VA42joIICjhelhaG1TJiyDumfZBU1ZA1XMajUK7zkEiOV2iX8veYAwtO66JwZDZD'
+VERIFY_TOKEN = 'my_fb_automation_token'
 
 
 @app.route('/webhook', methods=['GET', 'POST'])
@@ -46,5 +47,6 @@ def send_message(recipient_id, text):
     print(response.status_code, response.text)
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # Render provides this
+    app.run(host="0.0.0.0", port=port)
