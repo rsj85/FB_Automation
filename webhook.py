@@ -29,6 +29,11 @@ def webhook():
         return "EVENT_RECEIVED", 200
 
 
+@app.route("/")
+def index():
+    return "Hello, this is the webhook server."
+
+
 def send_message(recipient_id, text):
     """Send a message to the recipient via the Send API."""
     url = "https://graph.facebook.com/v19.0/me/messages"
