@@ -16,20 +16,22 @@ def index():
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
     if request.method == "GET":
-        # Facebook verification
-        mode = request.args.get("hub.mode")
-        token = request.args.get("hub.verify_token")
-        challenge = request.args.get("hub.challenge")
-
-        if mode == "subscribe" and token == VERIFY_TOKEN:
-            print("Webhook verified successfully")
-            return challenge, 200
-        else:
-            print("Verification failed")
-            return "Verification token mismatch", 403
+        # (your verification code)
+        ...
 
     elif request.method == "POST":
-        print("Webhook received a POST request")
+        data = request.get_json()
+        print("Webhook event received:", data)
+
+        for entry in data.get("entry", []):
+            for event in entry.get("messaging", []):
+                sender_id = event["sender"]["id"]  # This is the PSID!
+                if "message" in event:
+                    message_text = event["message"].get("text")
+                    print(f"PSID: {sender_id} | Message: {message_text}")
+                    # Optionally auto-reply
+                    # send_message(sender_id, "Thanks! We'll remind you soon.")
+
         return "EVENT_RECEIVED", 200
 
 
