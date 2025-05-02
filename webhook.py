@@ -2,6 +2,7 @@ from flask import Flask, request
 import requests
 import os
 import json
+import csv
 
 app = Flask(__name__)
 
@@ -40,6 +41,12 @@ def webhook():
 
                 if sender_id and message_text:
                     print(f"✅ PSID: {sender_id} | Message: {message_text}")
+
+                    # 🔽 Save to CSV
+                    with open("psids.csv", mode="a", newline="") as file:
+                        writer = csv.writer(file)
+                        writer.writerow([sender_id, message_text])
+
                 else:
                     print("⚠️ Event does not contain a user message.")
 
